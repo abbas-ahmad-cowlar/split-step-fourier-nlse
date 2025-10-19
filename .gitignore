@@ -20,3 +20,14 @@ dist/
 .pytest_cache/
 .ipynb_checkpoints/
 
+# Operating system metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor and IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
