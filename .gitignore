@@ -1,0 +1,10 @@
+# Private release archive
+.private_archive/
+
+# Local Python environments
+venv/
+.venv/
+env/
+.env
+
+# Python bytecode and packaging outputs
