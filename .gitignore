@@ -31,3 +31,9 @@ desktop.ini
 *.swp
 *.swo
 
+# Large or transient scientific outputs
+*.hdf5
+*.h5
+*.tmp
+*.bak
+*.log
