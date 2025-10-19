@@ -8,3 +8,15 @@ env/
 .env
 
 # Python bytecode and packaging outputs
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+build/
+dist/
+
+# Pytest and Jupyter generated files
+.pytest_cache/
+.ipynb_checkpoints/
+
