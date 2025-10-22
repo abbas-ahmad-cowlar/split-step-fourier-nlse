@@ -11,3 +11,6 @@ Shared functions for normalized NLSE split-step Fourier simulations:
 - Plotting helpers for propagation maps
 """
 
+import numpy as np
+
+
