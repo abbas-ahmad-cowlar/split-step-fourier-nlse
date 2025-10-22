@@ -60,3 +60,24 @@ def create_grid(N_t=1024, tau_window=20.0):
     return tau, omega, dtau
 
 
+def gaussian_pulse(tau, chirp=0):
+    """Create a normalized Gaussian pulse envelope.
+
+    Physics:
+        The Gaussian pulse u(tau) = exp(-(1+iC)tau^2/2) is the standard test pulse
+        in fiber optics. Under dispersion-only propagation, its width evolves as
+        T(xi) = T0*sqrt(1 + xi^2), providing an exact analytical benchmark.
+
+        The chirp parameter C introduces a linear frequency sweep across the
+        pulse: omega_inst(tau) = C*tau. C > 0 means the leading edge is red-shifted.
+
+    Args:
+        tau (np.ndarray): Normalized time array from create_grid().
+        chirp (float): Chirp parameter C. Default: 0 (transform-limited).
+            C > 0: up-chirped. C < 0: down-chirped.
+
+    Returns:
+        u (np.ndarray): Complex pulse envelope, shape same as tau,
+            dtype complex128. Peak amplitude = 1.0 at tau = 0.
+    """
+    return np.exp(-(1 + 1j * chirp) * tau**2 / 2)
