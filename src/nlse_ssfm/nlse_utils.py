@@ -58,3 +58,5 @@ def create_grid(N_t=1024, tau_window=20.0):
     dtau = tau[1] - tau[0]
     omega = 2 * np.pi * np.fft.fftfreq(N_t, d=dtau)
     return tau, omega, dtau
+
+
