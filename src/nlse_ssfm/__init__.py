@@ -13,3 +13,7 @@ from .nlse_utils import (
     normalized_spectrum,
     rms_width,
     instantaneous_frequency,
+    plot_propagation_map,
+    save_figure,
+    plot_spectrum_evolution,
+)
