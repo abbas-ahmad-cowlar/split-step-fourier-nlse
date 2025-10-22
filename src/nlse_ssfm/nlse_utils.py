@@ -81,3 +81,5 @@ def gaussian_pulse(tau, chirp=0):
             dtype complex128. Peak amplitude = 1.0 at tau = 0.
     """
     return np.exp(-(1 + 1j * chirp) * tau**2 / 2)
+
+
