@@ -129,3 +129,5 @@ def compute_energy(u, dtau):
         energy (float): Total pulse energy (dimensionless in normalized units).
     """
     return np.sum(np.abs(u)**2) * dtau
+
+
