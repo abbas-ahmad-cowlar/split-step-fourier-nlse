@@ -83,3 +83,80 @@ def gaussian_pulse(tau, chirp=0):
     return np.exp(-(1 + 1j * chirp) * tau**2 / 2)
 
 
+def sech_pulse(tau, amplitude=1.0):
+    """Create a soliton (hyperbolic secant) pulse envelope.
+
+    Physics:
+        The sech pulse u(tau) = amplitude*sech(tau) = amplitude/cosh(tau)
+        is the standard soliton shape for the NLSE.
+
+        Key property: integral |sech(tau)|^2 dtau = 2 (used as validation check).
+
+        In this project, soliton order is represented by the solver
+        coefficient N_sq. For a second-order soliton, use
+        sech_pulse(tau) and pass N_sq=4 to ssfm_propagate().
+
+    Args:
+        tau (np.ndarray): Normalized time array from create_grid().
+        amplitude (float): Optional amplitude scaling for generic tests.
+            Default: 1.0. This is not the soliton order.
+
+    Returns:
+        u (np.ndarray): Complex pulse envelope, shape same as tau,
+            dtype complex128. Peak amplitude = amplitude at tau = 0.
+    """
+    abs_tau = np.abs(tau)
+    sech = 2 * np.exp(-abs_tau) / (1 + np.exp(-2 * abs_tau))
+    return (amplitude * sech).astype(np.complex128)
+
+
+def compute_energy(u, dtau):
+    """Compute total pulse energy (conserved quantity of the NLSE).
+
+    Physics:
+        The NLSE conserves the integral E = integral |u(xi,tau)|^2 dtau during
+        propagation. This is analogous to probability conservation
+        integral |psi|^2 dx = 1 in quantum mechanics. If E(xi)/E(0) drifts
+        from 1.0, the solver has a bug.
+
+        Formula: E = sum |u_k|^2 * dtau (rectangular quadrature)
+
+    Args:
+        u (np.ndarray): Complex pulse envelope array of shape (N_t,).
+        dtau (float): Time step size from create_grid().
+
+    Returns:
+        energy (float): Total pulse energy (dimensionless in normalized units).
+    """
+    return np.sum(np.abs(u)**2) * dtau
+
+
+def compute_spectrum(u):
+    """Compute unnormalized plotting spectrum |FFT(u)|^2 with zero-frequency centered.
+
+    Physics:
+        The power spectrum |U(omega)|^2 shows the frequency content of the pulse.
+        Under SPM-only propagation, the spectrum broadens while the temporal
+        shape |u(tau)|^2 stays constant. The spectrum is fftshift-ed so that
+        omega = 0 is at the center -- suitable for direct plotting.
+
+    Args:
+        u (np.ndarray): Complex pulse envelope array of shape (N_t,).
+
+    Returns:
+        spectrum (np.ndarray): Unnormalized plotting spectrum |U(omega)|^2 of shape
+            (N_t,), with zero-frequency at the center (fftshift applied).
+    """
+    U = np.fft.fftshift(np.fft.fft(u))
+    return np.abs(U)**2
+
+
+def compute_spectrum_density(u, dtau):
+    """Compute dtau-normalized spectral intensity for Parseval checks.
+
+    Uses the Fourier convention U(omega) = (1/sqrt(2pi)) integral u(tau) exp(-i*omega*tau) dtau.
+    With domega = 2pi/(N*dtau), sum(|U|^2)*domega should match
+    sum(|u|^2)*dtau to numerical precision for well-resolved pulses.
+    """
+    U = np.fft.fftshift(np.fft.fft(u)) * dtau / np.sqrt(2 * np.pi)
+    return np.abs(U)**2
