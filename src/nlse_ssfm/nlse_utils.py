@@ -108,3 +108,5 @@ def sech_pulse(tau, amplitude=1.0):
     abs_tau = np.abs(tau)
     sech = 2 * np.exp(-abs_tau) / (1 + np.exp(-2 * abs_tau))
     return (amplitude * sech).astype(np.complex128)
+
+
