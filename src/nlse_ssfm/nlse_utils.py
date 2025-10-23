@@ -160,3 +160,5 @@ def compute_spectrum_density(u, dtau):
     """
     U = np.fft.fftshift(np.fft.fft(u)) * dtau / np.sqrt(2 * np.pi)
     return np.abs(U)**2
+
+
