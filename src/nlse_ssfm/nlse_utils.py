@@ -110,3 +110,22 @@ def sech_pulse(tau, amplitude=1.0):
     return (amplitude * sech).astype(np.complex128)
 
 
+def compute_energy(u, dtau):
+    """Compute total pulse energy (conserved quantity of the NLSE).
+
+    Physics:
+        The NLSE conserves the integral E = integral |u(xi,tau)|^2 dtau during
+        propagation. This is analogous to probability conservation
+        integral |psi|^2 dx = 1 in quantum mechanics. If E(xi)/E(0) drifts
+        from 1.0, the solver has a bug.
+
+        Formula: E = sum |u_k|^2 * dtau (rectangular quadrature)
+
+    Args:
+        u (np.ndarray): Complex pulse envelope array of shape (N_t,).
+        dtau (float): Time step size from create_grid().
+
+    Returns:
+        energy (float): Total pulse energy (dimensionless in normalized units).
+    """
+    return np.sum(np.abs(u)**2) * dtau
