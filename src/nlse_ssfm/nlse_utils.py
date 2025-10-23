@@ -131,3 +131,21 @@ def compute_energy(u, dtau):
     return np.sum(np.abs(u)**2) * dtau
 
 
+def compute_spectrum(u):
+    """Compute unnormalized plotting spectrum |FFT(u)|^2 with zero-frequency centered.
+
+    Physics:
+        The power spectrum |U(omega)|^2 shows the frequency content of the pulse.
+        Under SPM-only propagation, the spectrum broadens while the temporal
+        shape |u(tau)|^2 stays constant. The spectrum is fftshift-ed so that
+        omega = 0 is at the center -- suitable for direct plotting.
+
+    Args:
+        u (np.ndarray): Complex pulse envelope array of shape (N_t,).
+
+    Returns:
+        spectrum (np.ndarray): Unnormalized plotting spectrum |U(omega)|^2 of shape
+            (N_t,), with zero-frequency at the center (fftshift applied).
+    """
+    U = np.fft.fftshift(np.fft.fft(u))
+    return np.abs(U)**2
