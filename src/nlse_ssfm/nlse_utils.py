@@ -151,3 +151,12 @@ def compute_spectrum(u):
     return np.abs(U)**2
 
 
+def compute_spectrum_density(u, dtau):
+    """Compute dtau-normalized spectral intensity for Parseval checks.
+
+    Uses the Fourier convention U(omega) = (1/sqrt(2pi)) integral u(tau) exp(-i*omega*tau) dtau.
+    With domega = 2pi/(N*dtau), sum(|U|^2)*domega should match
+    sum(|u|^2)*dtau to numerical precision for well-resolved pulses.
+    """
+    U = np.fft.fftshift(np.fft.fft(u)) * dtau / np.sqrt(2 * np.pi)
+    return np.abs(U)**2
