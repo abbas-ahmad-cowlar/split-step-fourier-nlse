@@ -149,3 +149,5 @@ def compute_spectrum(u):
     """
     U = np.fft.fftshift(np.fft.fft(u))
     return np.abs(U)**2
+
+
