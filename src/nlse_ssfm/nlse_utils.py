@@ -191,3 +191,18 @@ def rms_width(u, tau, dtau):
     return np.sqrt(variance)
 
 
+def instantaneous_frequency(u, dtau, intensity_floor=None):
+    """Compute instantaneous frequency omega_i = -d(arg(u))/dtau.
+
+    If intensity_floor is provided, values where |u|^2 is below
+    intensity_floor * max(|u|^2) are set to NaN. This prevents meaningless
+    phase in the pulse tails from contaminating chirp plots.
+    """
+    phase = np.unwrap(np.angle(u))
+    chirp = -np.gradient(phase, dtau)
+    if intensity_floor is not None:
+        intensity = np.abs(u)**2
+        mask = intensity >= intensity_floor * np.max(intensity)
+        chirp = chirp.astype(float)
+        chirp[~mask] = np.nan
+    return chirp
