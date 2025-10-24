@@ -160,3 +160,34 @@ def compute_spectrum_density(u, dtau):
     """
     U = np.fft.fftshift(np.fft.fft(u)) * dtau / np.sqrt(2 * np.pi)
     return np.abs(U)**2
+
+
+def normalized_spectrum(u):
+    """Return fftshifted |FFT(u)|^2 normalized to a peak of 1 for plotting."""
+    spectrum = compute_spectrum(u)
+    peak = np.max(spectrum)
+    if peak == 0:
+        return spectrum
+    return spectrum / peak
+
+
+def rms_width(u, tau, dtau):
+    """Compute RMS pulse width using intensity-weighted moments.
+
+    Args:
+        u (np.ndarray): Complex pulse envelope.
+        tau (np.ndarray): Time grid.
+        dtau (float): Time step.
+
+    Returns:
+        sigma (float): RMS pulse width.
+    """
+    intensity = np.abs(u)**2
+    energy = np.sum(intensity) * dtau
+    if energy <= 0 or not np.isfinite(energy):
+        raise ValueError("pulse energy must be positive and finite")
+    mean_tau = np.sum(tau * intensity) * dtau / energy
+    variance = np.sum((tau - mean_tau)**2 * intensity) * dtau / energy
+    return np.sqrt(variance)
+
+
