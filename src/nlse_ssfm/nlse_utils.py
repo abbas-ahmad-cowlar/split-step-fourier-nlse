@@ -162,3 +162,10 @@ def compute_spectrum_density(u, dtau):
     return np.abs(U)**2
 
 
+def normalized_spectrum(u):
+    """Return fftshifted |FFT(u)|^2 normalized to a peak of 1 for plotting."""
+    spectrum = compute_spectrum(u)
+    peak = np.max(spectrum)
+    if peak == 0:
+        return spectrum
+    return spectrum / peak
