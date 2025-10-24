@@ -243,3 +243,5 @@ def plot_propagation_map(ax, tau, xi, u_hist, tau_lim=None, cmap="inferno",
     if title:
         ax.set_title(title)
     return im
+
+
