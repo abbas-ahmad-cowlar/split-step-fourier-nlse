@@ -189,3 +189,5 @@ def rms_width(u, tau, dtau):
     mean_tau = np.sum(tau * intensity) * dtau / energy
     variance = np.sum((tau - mean_tau)**2 * intensity) * dtau / energy
     return np.sqrt(variance)
+
+
