@@ -171,3 +171,21 @@ def normalized_spectrum(u):
     return spectrum / peak
 
 
+def rms_width(u, tau, dtau):
+    """Compute RMS pulse width using intensity-weighted moments.
+
+    Args:
+        u (np.ndarray): Complex pulse envelope.
+        tau (np.ndarray): Time grid.
+        dtau (float): Time step.
+
+    Returns:
+        sigma (float): RMS pulse width.
+    """
+    intensity = np.abs(u)**2
+    energy = np.sum(intensity) * dtau
+    if energy <= 0 or not np.isfinite(energy):
+        raise ValueError("pulse energy must be positive and finite")
+    mean_tau = np.sum(tau * intensity) * dtau / energy
+    variance = np.sum((tau - mean_tau)**2 * intensity) * dtau / energy
+    return np.sqrt(variance)
