@@ -208,3 +208,38 @@ def instantaneous_frequency(u, dtau, intensity_floor=None):
     return chirp
 
 
+def plot_propagation_map(ax, tau, xi, u_hist, tau_lim=None, cmap="inferno",
+                         title=None, vmax=None):
+    """Plot |u(xi,tau)|^2 on an existing Matplotlib axis and return the mesh."""
+    mask = np.ones_like(tau, dtype=bool)
+    if tau_lim is not None:
+        mask = (tau >= tau_lim[0]) & (tau <= tau_lim[1])
+    intensity = np.abs(u_hist[:, mask])**2
+    tau_plot = tau[mask]
+    if tau_plot.size < 2 or xi.size < 2:
+        raise ValueError(
+            "plot_propagation_map requires at least two tau and xi points"
+        )
+    tau_edges = np.concatenate([
+        [tau_plot[0] - 0.5 * (tau_plot[1] - tau_plot[0])],
+        0.5 * (tau_plot[1:] + tau_plot[:-1]),
+        [tau_plot[-1] + 0.5 * (tau_plot[-1] - tau_plot[-2])],
+    ])
+    xi_edges = np.concatenate([
+        [xi[0] - 0.5 * (xi[1] - xi[0])],
+        0.5 * (xi[1:] + xi[:-1]),
+        [xi[-1] + 0.5 * (xi[-1] - xi[-2])],
+    ])
+    im = ax.pcolormesh(
+        tau_edges,
+        xi_edges,
+        intensity,
+        shading="auto",
+        cmap=cmap,
+        vmax=vmax,
+    )
+    ax.set_xlabel(r"$\tau$")
+    ax.set_ylabel(r"$\xi$")
+    if title:
+        ax.set_title(title)
+    return im
