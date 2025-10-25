@@ -46,3 +46,29 @@ def dispersion_step(u, omega, s, dxi_half):
     return np.fft.ifft(U * phase)
 
 
+def nonlinear_step(u, N_sq, dxi):
+    """Apply one full step of Kerr nonlinearity in the time domain.
+
+    Physics:
+        The Kerr effect creates an intensity-dependent phase shift:
+        phi_NL(tau) = N^2 * |u(tau)|^2 * dxi. This is Self-Phase Modulation (SPM).
+
+        Key property: |u*exp(i*phi)|^2 = |u|^2 -- the temporal intensity is
+        UNCHANGED by SPM. Only the phase (and therefore the spectrum) changes.
+
+        This function is called ONCE per symmetric split-step iteration,
+        sandwiched between the two dispersion half-steps.
+
+    Args:
+        u (np.ndarray): Complex pulse envelope in time domain, shape (N_t,).
+            This should be the pulse AFTER the first dispersion half-step.
+        N_sq (float): Soliton number squared, N^2 = gamma*P0*L_D.
+            N_sq = 0: no nonlinearity (linear propagation).
+            N_sq = 1: fundamental soliton condition.
+        dxi (float): Full step size in normalized distance.
+
+    Returns:
+        u_out (np.ndarray): Pulse after nonlinear step, shape (N_t,),
+            dtype complex128. Has same |u|^2 as input.
+    """
+    return u * np.exp(1j * N_sq * np.abs(u)**2 * dxi)
