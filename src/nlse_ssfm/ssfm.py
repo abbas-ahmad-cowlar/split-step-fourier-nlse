@@ -44,3 +44,5 @@ def dispersion_step(u, omega, s, dxi_half):
     U = np.fft.fft(u)
     phase = np.exp(-1j * s * omega**2 * dxi_half / 2)
     return np.fft.ifft(U * phase)
+
+
