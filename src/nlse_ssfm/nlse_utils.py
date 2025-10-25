@@ -245,3 +245,18 @@ def plot_propagation_map(ax, tau, xi, u_hist, tau_lim=None, cmap="inferno",
     return im
 
 
+def save_figure(fig, path, dpi=300):
+    """Apply tight layout, create the parent directory, and save a figure."""
+    from pathlib import Path
+    import warnings
+
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            "ignore",
+            message="This figure includes Axes that are not compatible with tight_layout.*",
+            category=UserWarning,
+        )
+        fig.tight_layout()
+    fig.savefig(path, dpi=dpi, bbox_inches="tight")
