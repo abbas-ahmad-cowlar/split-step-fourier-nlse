@@ -260,3 +260,25 @@ def save_figure(fig, path, dpi=300):
         )
         fig.tight_layout()
     fig.savefig(path, dpi=dpi, bbox_inches="tight")
+
+
+def plot_spectrum_evolution(ax, omega, fields, labels, omega_lim=None,
+                            normalize=True, linewidth=1.5):
+    """Plot fftshifted spectra for several fields on an existing axis."""
+    omega_shifted = np.fft.fftshift(omega)
+    mask = np.ones_like(omega_shifted, dtype=bool)
+    if omega_lim is not None:
+        mask = (omega_shifted >= omega_lim[0]) & (omega_shifted <= omega_lim[1])
+
+    for field, label in zip(fields, labels):
+        spectrum = normalized_spectrum(field) if normalize else compute_spectrum(field)
+        ax.plot(omega_shifted[mask], spectrum[mask], linewidth=linewidth, label=label)
+
+    ax.set_xlabel(r"$\omega$")
+    ylabel = (r"Normalized $|\tilde{u}(\omega)|^2$" if normalize
+              else r"$|\tilde{u}(\omega)|^2$")
+    ax.set_ylabel(ylabel)
+    if omega_lim is not None:
+        ax.set_xlim(*omega_lim)
+    ax.legend()
+    ax.grid(True, alpha=0.3)
