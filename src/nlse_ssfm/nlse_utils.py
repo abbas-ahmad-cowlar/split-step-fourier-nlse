@@ -191,3 +191,72 @@ def rms_width(u, tau, dtau):
     return np.sqrt(variance)
 
 
+def instantaneous_frequency(u, dtau, intensity_floor=None):
+    """Compute instantaneous frequency omega_i = -d(arg(u))/dtau.
+
+    If intensity_floor is provided, values where |u|^2 is below
+    intensity_floor * max(|u|^2) are set to NaN. This prevents meaningless
+    phase in the pulse tails from contaminating chirp plots.
+    """
+    phase = np.unwrap(np.angle(u))
+    chirp = -np.gradient(phase, dtau)
+    if intensity_floor is not None:
+        intensity = np.abs(u)**2
+        mask = intensity >= intensity_floor * np.max(intensity)
+        chirp = chirp.astype(float)
+        chirp[~mask] = np.nan
+    return chirp
+
+
+def plot_propagation_map(ax, tau, xi, u_hist, tau_lim=None, cmap="inferno",
+                         title=None, vmax=None):
+    """Plot |u(xi,tau)|^2 on an existing Matplotlib axis and return the mesh."""
+    mask = np.ones_like(tau, dtype=bool)
+    if tau_lim is not None:
+        mask = (tau >= tau_lim[0]) & (tau <= tau_lim[1])
+    intensity = np.abs(u_hist[:, mask])**2
+    tau_plot = tau[mask]
+    if tau_plot.size < 2 or xi.size < 2:
+        raise ValueError(
+            "plot_propagation_map requires at least two tau and xi points"
+        )
+    tau_edges = np.concatenate([
+        [tau_plot[0] - 0.5 * (tau_plot[1] - tau_plot[0])],
+        0.5 * (tau_plot[1:] + tau_plot[:-1]),
+        [tau_plot[-1] + 0.5 * (tau_plot[-1] - tau_plot[-2])],
+    ])
+    xi_edges = np.concatenate([
+        [xi[0] - 0.5 * (xi[1] - xi[0])],
+        0.5 * (xi[1:] + xi[:-1]),
+        [xi[-1] + 0.5 * (xi[-1] - xi[-2])],
+    ])
+    im = ax.pcolormesh(
+        tau_edges,
+        xi_edges,
+        intensity,
+        shading="auto",
+        cmap=cmap,
+        vmax=vmax,
+    )
+    ax.set_xlabel(r"$\tau$")
+    ax.set_ylabel(r"$\xi$")
+    if title:
+        ax.set_title(title)
+    return im
+
+
+def save_figure(fig, path, dpi=300):
+    """Apply tight layout, create the parent directory, and save a figure."""
+    from pathlib import Path
+    import warnings
+
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            "ignore",
+            message="This figure includes Axes that are not compatible with tight_layout.*",
+            category=UserWarning,
+        )
+        fig.tight_layout()
+    fig.savefig(path, dpi=dpi, bbox_inches="tight")
