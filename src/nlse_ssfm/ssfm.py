@@ -72,3 +72,5 @@ def nonlinear_step(u, N_sq, dxi):
             dtype complex128. Has same |u|^2 as input.
     """
     return u * np.exp(1j * N_sq * np.abs(u)**2 * dxi)
+
+
