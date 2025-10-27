@@ -30,3 +30,5 @@ def _row(test, expected, measured, passed):
         "measured": measured,
         "passed": bool(passed),
     }
+
+
