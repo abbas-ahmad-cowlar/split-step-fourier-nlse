@@ -32,3 +32,12 @@ def _row(test, expected, measured, passed):
     }
 
 
+def _save_fig(fig, save_path):
+    """Save figure if *save_path* is not None, creating parent dirs."""
+    if save_path is None:
+        return
+    from pathlib import Path
+    p = Path(save_path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    fig.tight_layout()
+    fig.savefig(p, dpi=300, bbox_inches="tight")
