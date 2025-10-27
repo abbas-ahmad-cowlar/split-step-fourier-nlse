@@ -23,3 +23,10 @@ from .ssfm import ssfm_propagate
 # Helper
 # ------------------------------------------------------------------
 
+def _row(test, expected, measured, passed):
+    return {
+        "test": test,
+        "expected": expected,
+        "measured": measured,
+        "passed": bool(passed),
+    }
