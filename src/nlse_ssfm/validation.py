@@ -41,3 +41,9 @@ def _save_fig(fig, save_path):
     p.parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
     fig.savefig(p, dpi=300, bbox_inches="tight")
+
+
+# ------------------------------------------------------------------
+# 1. Convergence study
+# ------------------------------------------------------------------
+
