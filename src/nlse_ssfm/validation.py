@@ -250,3 +250,62 @@ def run_gaussian_broadening_check(save_path=None):
 # 4. Soliton acid test
 # ------------------------------------------------------------------
 
+def run_soliton_acid_test(save_path=None):
+    """Check N=1 soliton shape plus phase errors."""
+    tau, omega, dtau = create_grid(N_t=2048, tau_window=20.0)
+    u0 = sech_pulse(tau)
+    xi_max = 5 * np.pi / 2
+    xi_arr, uh = ssfm_propagate(u0, tau, omega, xi_max=xi_max,
+                                 N_z=500, s=1, N_sq=1.0)
+
+    max_shape = 0.0
+    for i in range(len(xi_arr)):
+        e = np.max(np.abs(np.abs(uh[i]) - np.abs(u0)))
+        if e > max_shape:
+            max_shape = e
+
+    u_exact = u0 * np.exp(1j * xi_arr[-1] / 2)
+    exact_err = np.max(np.abs(uh[-1] - u_exact))
+    ov = np.vdot(u_exact, uh[-1])
+    gp = ov / abs(ov)
+    aligned_err = np.max(np.abs(uh[-1] - gp * u_exact))
+
+    if save_path is not None:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        errs = np.array([np.max(np.abs(np.abs(uh[i]) - np.abs(u0)))
+                         for i in range(len(xi_arr))])
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
+        ax1.semilogy(xi_arr, errs, 'b-', lw=1.5)
+        ax1.axhline(1e-4, color='r', ls='--', lw=1, label='Threshold')
+        ax1.set_xlabel(r'$\xi$', fontsize=12)
+        ax1.set_ylabel('Shape error', fontsize=12)
+        ax1.set_title('N=1 Soliton Shape Error vs Distance', fontsize=13)
+        ax1.legend(fontsize=10); ax1.grid(True, alpha=0.3)
+        ax2.plot(tau, np.abs(u0)**2, 'b-', lw=2, label='Initial')
+        ax2.plot(tau, np.abs(uh[-1])**2, 'r--', lw=1.5, label='Final')
+        ax2.set_xlim(-6, 6)
+        ax2.set_xlabel(r'$\tau$', fontsize=12)
+        ax2.set_ylabel(r'$|u|^2$', fontsize=12)
+        ax2.set_title('Soliton Profile Overlay', fontsize=13)
+        ax2.legend(fontsize=10); ax2.grid(True, alpha=0.3)
+        fig.suptitle('Soliton Acid Test', fontsize=14)
+        _save_fig(fig, save_path)
+        plt.close(fig)
+
+    p = max_shape < 1e-4 and exact_err < 5e-3 and aligned_err < 1e-4
+    return {
+        "passed": p,
+        "max_shape_error": max_shape,
+        "exact_phase_error": exact_err,
+        "aligned_phase_error": aligned_err,
+        "rows": [
+            _row("Soliton shape (all steps)", "< 1e-4",
+                 f"{max_shape:.2e}", max_shape < 1e-4),
+            _row("Soliton exact-phase error", "< 5e-3",
+                 f"{exact_err:.2e}", exact_err < 5e-3),
+            _row("Soliton phase-aligned error", "< 1e-4",
+                 f"{aligned_err:.2e}", aligned_err < 1e-4),
+        ],
+    }
