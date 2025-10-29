@@ -139,3 +139,48 @@ def run_convergence_study(save_path=None):
 # 2. Energy conservation
 # ------------------------------------------------------------------
 
+def run_energy_conservation_checks(save_path=None):
+    """Check max |E(xi)/E(0)-1| for N=1 and N=2 soliton propagation."""
+    tau, omega, dtau = create_grid(N_t=2048, tau_window=20.0)
+    u0 = sech_pulse(tau)
+    E0 = compute_energy(u0, dtau)
+
+    xi1, uh1 = ssfm_propagate(u0, tau, omega, xi_max=5*np.pi/2,
+                               N_z=500, s=1, N_sq=1.0)
+    en1 = np.array([compute_energy(uh1[i], dtau) for i in range(len(xi1))])
+    dev1 = np.max(np.abs(en1 / E0 - 1.0))
+
+    xi2, uh2 = ssfm_propagate(u0, tau, omega, xi_max=np.pi,
+                               N_z=1000, s=1, N_sq=4.0)
+    en2 = np.array([compute_energy(uh2[i], dtau) for i in range(len(xi2))])
+    dev2 = np.max(np.abs(en2 / E0 - 1.0))
+
+    if save_path is not None:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
+        ax1.plot(xi1, en1 / E0 - 1, 'b-', lw=1.5)
+        ax1.set_xlabel(r'$\xi$', fontsize=12)
+        ax1.set_ylabel(r'$E(\xi)/E(0) - 1$', fontsize=12)
+        ax1.set_title('N=1 Soliton', fontsize=13)
+        ax1.grid(True, alpha=0.3)
+        ax2.plot(xi2, en2 / E0 - 1, 'r-', lw=1.5)
+        ax2.set_xlabel(r'$\xi$', fontsize=12)
+        ax2.set_ylabel(r'$E(\xi)/E(0) - 1$', fontsize=12)
+        ax2.set_title('N=2 Soliton', fontsize=13)
+        ax2.grid(True, alpha=0.3)
+        fig.suptitle('Energy Conservation', fontsize=14)
+        _save_fig(fig, save_path)
+        plt.close(fig)
+
+    return {
+        "passed": dev1 < 1e-10 and dev2 < 1e-10,
+        "max_E_dev_N1": dev1, "max_E_dev_N2": dev2,
+        "rows": [
+            _row("Energy conservation N=1", "< 1e-10", f"{dev1:.2e}",
+                 dev1 < 1e-10),
+            _row("Energy conservation N=2", "< 1e-10", f"{dev2:.2e}",
+                 dev2 < 1e-10),
+        ],
+    }
