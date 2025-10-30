@@ -341,3 +341,21 @@ def run_spm_invariance_check(save_path=None):
 # 6. Dispersion spectral power
 # ------------------------------------------------------------------
 
+def run_dispersion_spectral_power_check(save_path=None):
+    """Dispersion-only: assert spectral power is invariant."""
+    tau, omega, dtau = create_grid(N_t=2048, tau_window=30.0)
+    u0 = gaussian_pulse(tau)
+    _, uh = ssfm_propagate(u0, tau, omega, xi_max=5.0,
+                            N_z=500, s=1, N_sq=0.0)
+    spec0 = np.abs(np.fft.fft(u0))**2
+    spec_f = np.abs(np.fft.fft(uh[-1]))**2
+    rel_err = np.max(np.abs(spec_f - spec0)) / np.max(spec0)
+
+    return {
+        "passed": rel_err < 1e-10,
+        "spectral_power_error": rel_err,
+        "rows": [
+            _row("Dispersion spectral power", "< 1e-10",
+                 f"{rel_err:.2e}", rel_err < 1e-10),
+        ],
+    }
