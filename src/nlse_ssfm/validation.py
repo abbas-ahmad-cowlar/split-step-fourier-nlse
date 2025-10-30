@@ -309,3 +309,97 @@ def run_soliton_acid_test(save_path=None):
                  f"{aligned_err:.2e}", aligned_err < 1e-4),
         ],
     }
+
+
+# ------------------------------------------------------------------
+# 5. SPM invariance
+# ------------------------------------------------------------------
+
+def run_spm_invariance_check(save_path=None):
+    """SPM-only: s=0, N_sq=1. Assert |u|^2 invariance."""
+    tau, omega, dtau = create_grid(N_t=2048, tau_window=20.0)
+    u0 = gaussian_pulse(tau)
+    _, uh = ssfm_propagate(u0, tau, omega, xi_max=5.0,
+                            N_z=500, s=0, N_sq=1.0)
+    dev = 0.0
+    for i in range(uh.shape[0]):
+        d = np.max(np.abs(np.abs(uh[i])**2 - np.abs(u0)**2))
+        if d > dev:
+            dev = d
+
+    return {
+        "passed": dev < 1e-10,
+        "max_intensity_deviation": dev,
+        "rows": [
+            _row("SPM intensity invariance", "< 1e-10",
+                 f"{dev:.2e}", dev < 1e-10),
+        ],
+    }
+
+
+# ------------------------------------------------------------------
+# 6. Dispersion spectral power
+# ------------------------------------------------------------------
+
+def run_dispersion_spectral_power_check(save_path=None):
+    """Dispersion-only: assert spectral power is invariant."""
+    tau, omega, dtau = create_grid(N_t=2048, tau_window=30.0)
+    u0 = gaussian_pulse(tau)
+    _, uh = ssfm_propagate(u0, tau, omega, xi_max=5.0,
+                            N_z=500, s=1, N_sq=0.0)
+    spec0 = np.abs(np.fft.fft(u0))**2
+    spec_f = np.abs(np.fft.fft(uh[-1]))**2
+    rel_err = np.max(np.abs(spec_f - spec0)) / np.max(spec0)
+
+    return {
+        "passed": rel_err < 1e-10,
+        "spectral_power_error": rel_err,
+        "rows": [
+            _row("Dispersion spectral power", "< 1e-10",
+                 f"{rel_err:.2e}", rel_err < 1e-10),
+        ],
+    }
+
+
+# ------------------------------------------------------------------
+# 7. Higher-order soliton recurrence
+# ------------------------------------------------------------------
+
+def run_higher_order_soliton_recurrence_checks(save_path=None):
+    """Check N=2 and N=3 recurrence at xi=pi/2.
+
+    Uses refined grids, u0 = sech_pulse(tau), N_sq=4 and 9, and asserts
+    N2_recurrence_error < 5e-3 and N3_recurrence_error < 1e-2.
+    """
+    # N=2
+    tau2, omega2, dtau2 = create_grid(N_t=2048, tau_window=20.0)
+    u0_2 = sech_pulse(tau2)
+    xi2, uh2 = ssfm_propagate(u0_2, tau2, omega2, xi_max=np.pi,
+                               N_z=1000, s=1, N_sq=4.0)
+    idx2 = np.argmin(np.abs(xi2 - np.pi / 2))
+    rec2_half = np.max(np.abs(np.abs(uh2[idx2]) - np.abs(u0_2)))
+    rec2_full = np.max(np.abs(np.abs(uh2[-1]) - np.abs(u0_2)))
+
+    # N=3
+    tau3, omega3, dtau3 = create_grid(N_t=4096, tau_window=20.0)
+    u0_3 = sech_pulse(tau3)
+    xi3, uh3 = ssfm_propagate(u0_3, tau3, omega3, xi_max=np.pi,
+                               N_z=2000, s=1, N_sq=9.0)
+    idx3 = np.argmin(np.abs(xi3 - np.pi / 2))
+    rec3_half = np.max(np.abs(np.abs(uh3[idx3]) - np.abs(u0_3)))
+    rec3_full = np.max(np.abs(np.abs(uh3[-1]) - np.abs(u0_3)))
+
+    p2 = rec2_half < 5e-3
+    p3 = rec3_half < 1e-2
+
+    return {
+        "passed": p2 and p3,
+        "N2_recurrence_half": rec2_half, "N2_recurrence_full": rec2_full,
+        "N3_recurrence_half": rec3_half, "N3_recurrence_full": rec3_full,
+        "rows": [
+            _row("N=2 recurrence at z_sol", "< 5e-3",
+                 f"{rec2_half:.2e}", p2),
+            _row("N=3 recurrence at z_sol", "< 1e-2",
+                 f"{rec3_half:.2e}", p3),
+        ],
+    }
