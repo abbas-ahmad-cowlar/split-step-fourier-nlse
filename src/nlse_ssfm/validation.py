@@ -359,3 +359,9 @@ def run_dispersion_spectral_power_check(save_path=None):
                  f"{rel_err:.2e}", rel_err < 1e-10),
         ],
     }
+
+
+# ------------------------------------------------------------------
+# 7. Higher-order soliton recurrence
+# ------------------------------------------------------------------
+
