@@ -315,3 +315,23 @@ def run_soliton_acid_test(save_path=None):
 # 5. SPM invariance
 # ------------------------------------------------------------------
 
+def run_spm_invariance_check(save_path=None):
+    """SPM-only: s=0, N_sq=1. Assert |u|^2 invariance."""
+    tau, omega, dtau = create_grid(N_t=2048, tau_window=20.0)
+    u0 = gaussian_pulse(tau)
+    _, uh = ssfm_propagate(u0, tau, omega, xi_max=5.0,
+                            N_z=500, s=0, N_sq=1.0)
+    dev = 0.0
+    for i in range(uh.shape[0]):
+        d = np.max(np.abs(np.abs(uh[i])**2 - np.abs(u0)**2))
+        if d > dev:
+            dev = d
+
+    return {
+        "passed": dev < 1e-10,
+        "max_intensity_deviation": dev,
+        "rows": [
+            _row("SPM intensity invariance", "< 1e-10",
+                 f"{dev:.2e}", dev < 1e-10),
+        ],
+    }
