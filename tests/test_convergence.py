@@ -7,3 +7,4 @@ import matplotlib.pyplot as plt
 from nlse_ssfm.nlse_utils import create_grid, sech_pulse
 from nlse_ssfm.ssfm import ssfm_propagate
 
+
