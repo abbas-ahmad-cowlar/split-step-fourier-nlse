@@ -432,3 +432,17 @@ def run_all_validation_checks():
                 result["passed"],
             ))
     return rows
+
+
+# Backward compatibility alias requested in audit
+soliton_test = run_soliton_acid_test
+
+
+if __name__ == "__main__":
+    rows = run_all_validation_checks()
+    for row in rows:
+        status = "[PASS]" if row["passed"] else "[FAIL]"
+        print(f"{status} {row['test']}: expected {row['expected']}, "
+              f"measured {row['measured']}")
+    if not all(row["passed"] for row in rows):
+        raise SystemExit(1)
