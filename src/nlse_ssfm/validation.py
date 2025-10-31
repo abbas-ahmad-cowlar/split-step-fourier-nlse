@@ -403,3 +403,46 @@ def run_higher_order_soliton_recurrence_checks(save_path=None):
                  f"{rec3_half:.2e}", p3),
         ],
     }
+
+
+# ------------------------------------------------------------------
+# Aggregator
+# ------------------------------------------------------------------
+
+def run_all_validation_checks():
+    """Run all checks and return a summary table with PASS/FAIL values."""
+    results = [
+        run_convergence_study(),
+        run_energy_conservation_checks(),
+        run_gaussian_broadening_check(),
+        run_soliton_acid_test(),
+        run_spm_invariance_check(),
+        run_dispersion_spectral_power_check(),
+        run_higher_order_soliton_recurrence_checks(),
+    ]
+    rows = []
+    for result in results:
+        if "rows" in result:
+            rows.extend(result["rows"])
+        else:
+            rows.append(_row(
+                result.get("test", "unnamed check"),
+                result.get("expected", ""),
+                result.get("measured", ""),
+                result["passed"],
+            ))
+    return rows
+
+
+# Backward compatibility alias requested in audit
+soliton_test = run_soliton_acid_test
+
+
+if __name__ == "__main__":
+    rows = run_all_validation_checks()
+    for row in rows:
+        status = "[PASS]" if row["passed"] else "[FAIL]"
+        print(f"{status} {row['test']}: expected {row['expected']}, "
+              f"measured {row['measured']}")
+    if not all(row["passed"] for row in rows):
+        raise SystemExit(1)
