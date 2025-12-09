@@ -16,3 +16,5 @@ Two competing effects — **group velocity dispersion** (temporal broadening) an
 balance in anomalous dispersion. The fundamental result is the optical **soliton**:
 a pulse that propagates without changing shape.
 
+## Key Results
+
