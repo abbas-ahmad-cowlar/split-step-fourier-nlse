@@ -31,3 +31,10 @@ Right: N=3 — complex multi-peak dynamics.*
 ![Convergence](figures/nb04_convergence.png)
 *Second-order convergence confirmed via log-log analysis (slope ≈ 2).*
 
+### More Results
+![SPM spectrum](figures/nb02_spectral_evolution.png)
+*Self-phase modulation broadens the spectral intensity while temporal intensity remains fixed.*
+
+![Energy conservation](figures/nb04_energy_conservation.png)
+*The SSFM preserves the NLSE energy invariant to floating-point precision.*
+
