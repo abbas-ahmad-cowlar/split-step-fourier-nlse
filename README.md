@@ -38,3 +38,13 @@ Right: N=3 — complex multi-peak dynamics.*
 ![Energy conservation](figures/nb04_energy_conservation.png)
 *The SSFM preserves the NLSE energy invariant to floating-point precision.*
 
+## Notebooks
+
+| # | Notebook | Topic |
+|---|----------|-------|
+| 01 | [Dispersion](notebooks/01_dispersion.ipynb) | Pulse broadening, chirp, anomalous vs normal GVD |
+| 02 | [Self-Phase Modulation](notebooks/02_spm.ipynb) | Kerr effect, spectral broadening, phase structure |
+| 03 | [Solitons](notebooks/03_solitons.ipynb) | N=1, 2, 3 soliton dynamics — the showcase |
+| 04 | [Validation](notebooks/04_validation.ipynb) | Convergence, energy conservation, ground truth cert |
+| 05 | [Advanced](notebooks/05_advanced.ipynb) | Soliton collisions, integrability |
+
