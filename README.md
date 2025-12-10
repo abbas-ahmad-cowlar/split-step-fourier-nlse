@@ -48,3 +48,15 @@ Right: N=3 — complex multi-peak dynamics.*
 | 04 | [Validation](notebooks/04_validation.ipynb) | Convergence, energy conservation, ground truth cert |
 | 05 | [Advanced](notebooks/05_advanced.ipynb) | Soliton collisions, integrability |
 
+## Usage
+
+```python
+import numpy as np
+from nlse_ssfm.ssfm import ssfm_propagate
+from nlse_ssfm.nlse_utils import create_grid, sech_pulse
+
+tau, omega, dtau = create_grid(N_t=2048, tau_window=20.0)
+u0 = sech_pulse(tau)
+xi_arr, u_hist = ssfm_propagate(u0, tau, omega, xi_max=5*np.pi/2, N_z=500, s=1, N_sq=1.0)
+```
+
