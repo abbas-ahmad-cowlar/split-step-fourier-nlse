@@ -18,3 +18,8 @@ a pulse that propagates without changing shape.
 
 ## Key Results
 
+### Soliton Propagation: N=1, 2, 3
+![Soliton comparison](figures/nb03_soliton_comparison.png)
+*Left: Fundamental soliton (N=1) — unchanged. Center: N=2 — periodic breathing.
+Right: N=3 — complex multi-peak dynamics.*
+
