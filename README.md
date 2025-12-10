@@ -27,3 +27,7 @@ Right: N=3 — complex multi-peak dynamics.*
 ![Soliton collision](figures/nb05_soliton_collision.png)
 *Two solitons collide and recover their shapes within numerical tolerance — the hallmark of integrability in the ideal NLSE.*
 
+### Solver Validation
+![Convergence](figures/nb04_convergence.png)
+*Second-order convergence confirmed via log-log analysis (slope ≈ 2).*
+
