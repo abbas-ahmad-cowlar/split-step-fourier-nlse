@@ -23,3 +23,7 @@ a pulse that propagates without changing shape.
 *Left: Fundamental soliton (N=1) — unchanged. Center: N=2 — periodic breathing.
 Right: N=3 — complex multi-peak dynamics.*
 
+### Soliton Collision
+![Soliton collision](figures/nb05_soliton_collision.png)
+*Two solitons collide and recover their shapes within numerical tolerance — the hallmark of integrability in the ideal NLSE.*
+
