@@ -60,3 +60,22 @@ u0 = sech_pulse(tau)
 xi_arr, u_hist = ssfm_propagate(u0, tau, omega, xi_max=5*np.pi/2, N_z=500, s=1, N_sq=1.0)
 ```
 
+## How to Run
+
+1. **Create and activate a virtual environment:**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+2. **Install dependencies and the package:**
+   ```bash
+   pip install -r requirements.txt
+   pip install -e .
+   ```
+3. **Launch Jupyter and open the notebooks:**
+   ```bash
+   jupyter notebook notebooks/
+   ```
+
+No specialized packages required: pure NumPy/SciPy implementation. The editable install exposes the package as `nlse_ssfm` for notebooks and related NLSE/PINN workflows.
+
