@@ -116,3 +116,6 @@ be checked against the same analytical benchmarks used by the validation suite.
 - Hasegawa, A. & Tappert, F. "Transmission of stationary nonlinear optical pulses..." (1973)
 - Mollenauer, L. F., Stolen, R. H., & Gordon, J. P. "Experimental observation of picosecond pulse narrowing..." (1980)
 
+## Author
+
+Syed Abbas Ahmad
