@@ -79,3 +79,28 @@ xi_arr, u_hist = ssfm_propagate(u0, tau, omega, xi_max=5*np.pi/2, N_z=500, s=1, 
 
 No specialized packages required: pure NumPy/SciPy implementation. The editable install exposes the package as `nlse_ssfm` for notebooks and related NLSE/PINN workflows.
 
+## Repository Structure
+
+```
+split-step-fourier-nlse/
+├── README.md
+├── requirements.txt
+├── pyproject.toml
+├── src/
+│   └── nlse_ssfm/
+│       ├── __init__.py
+│       ├── ssfm.py          # Validated SSFM solver
+│       ├── nlse_utils.py    # Grid, pulse definitions, diagnostics
+│       └── validation.py    # Importable solver-certification helpers
+├── notebooks/
+│   ├── 01_dispersion.ipynb
+│   ├── 02_spm.ipynb
+│   ├── 03_solitons.ipynb
+│   ├── 04_validation.ipynb
+│   └── 05_advanced.ipynb
+├── tests/
+│   └── [solver validation and regression tests]
+├── figures/
+│   └── [generated plots]
+```
+
